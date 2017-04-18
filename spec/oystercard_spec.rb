@@ -3,6 +3,7 @@ require './lib/oystercard'
 describe Oystercard do
   MAXIMUM_BALANCE = 90
   MINIMUM_BALANCE = 1
+  MINIMUM_FARE = 1
 
   it "has default value of 0" do
     expect(subject.balance).to eq(0)
@@ -20,13 +21,6 @@ describe Oystercard do
     end
   end
 
-  context '#deduct' do
-    it "deducts money from an oyster card that has money on it" do
-      subject.top_up(20)
-      expect(subject.deduct(10)).to eq 10
-    end
-  end
-
   context '#in_journey?' do
     it "starts off being not in a journey" do
     expect(subject.in_journey?).to eq false
@@ -39,6 +33,7 @@ describe Oystercard do
       subject.touch_in
       expect(subject.in_journey?).to eq true
     end
+
     it "throws an error when there is insufficient funds on the card to touch in" do
       expect { subject.touch_in }.to raise_error "Insufficient balance – (£#{MINIMUM_BALANCE}) needed"
     end
@@ -50,6 +45,12 @@ describe Oystercard do
       subject.touch_in
       subject.touch_out
       expect(subject.in_journey?).to eq false
+    end
+
+    it "deducts the minimum fare when touching out" do
+      subject.top_up(5)
+      subject.touch_in
+      expect {subject.touch_out }.to change{ subject.balance }.by(-MINIMUM_FARE)
     end
   end
 end
