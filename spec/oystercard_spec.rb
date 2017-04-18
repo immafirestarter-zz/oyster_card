@@ -26,4 +26,21 @@ describe Oystercard do
     end
   end
 
+  context '#in_journey?' do
+    it "starts off being not in a journey" do
+    expect(subject.in_journey?).to eq false
+    end
+    it "changes to true when touched in" do
+      subject.touch_in
+      expect(subject.in_journey?).to eq true
+    end
+    it "changes back to false when touching out" do
+      subject.touch_in
+      subject.touch_out
+      expect(subject.in_journey?).to eq false
+    end
+
+  end
+
+
 end
